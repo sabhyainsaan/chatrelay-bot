@@ -24,7 +24,7 @@ type ChatResponse struct {
 
 func StartMockServer() {
 	http.HandleFunc("/v1/chat/stream", func(w http.ResponseWriter, r *http.Request) {
-		// Start tracing span for incoming backend request
+		// Start tracing the span for incoming backend request
 		_, span := backendTracer.Start(r.Context(), "MockBackendResponse")
 		defer span.End()
 
@@ -48,7 +48,7 @@ func StartMockServer() {
 			FullResponse: "Goroutines are lightweight threads managed by the Go runtime.",
 		}
 
-		// Add response to trace
+		// Add response to the trace
 		span.SetAttributes(attribute.String("response", response.FullResponse))
 
 		w.Header().Set("Content-Type", "application/json")

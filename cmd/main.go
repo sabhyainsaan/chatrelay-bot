@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	// Initialize OpenTelemetry
+	//To Initialize the OpenTelemetry
 	shutdown := utils.InitTracer("chatrelaybot")
 	defer func() {
 		if err := shutdown(context.Background()); err != nil {
@@ -17,7 +17,7 @@ func main() {
 		}
 	}()
 
-	// Start app
+	// For Starting the app
 	backend.StartMockServer()
 	slackbot.StartBot()
 }

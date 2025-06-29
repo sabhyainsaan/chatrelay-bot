@@ -19,12 +19,12 @@ import (
 	"go.opentelemetry.io/otel/codes"
 )
 
-// Tracer for Slack interactions
+// Tracer for the Slack interactions
 var tracer = otel.Tracer("chatrelay/slack")
 
-// StartBot connects to Slack via Socket Mode and listens for events
+// The StartBot connects to Slack via Socket Mode and listens for events
 func StartBot() {
-	// Load environment variables
+	// For Loading the environment variables
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -59,9 +59,9 @@ func StartBot() {
 	client.Run()
 }
 
-// handleMention processes Slack app mentions and talks to the backend
+// handleMention processes the Slack app mentions and thn talks to the backend
 func handleMention(api *slack.Client, event *slackevents.AppMentionEvent, backendURL string) {
-	// Start tracing span
+	// Start tracing the span
 	_, span := tracer.Start(context.Background(), "HandleSlackMention")
 	defer span.End()
 
@@ -74,14 +74,14 @@ func handleMention(api *slack.Client, event *slackevents.AppMentionEvent, backen
 		attribute.String("slack.query", query),
 	)
 
-	// Build request body
+	// Build the request body
 	reqBody := map[string]string{
 		"user_id": event.User,
 		"query":   query,
 	}
 	jsonBody, _ := json.Marshal(reqBody)
 
-	// Call mock backend
+	// Call the mock backend
 	resp, err := http.Post(backendURL, "application/json", bytes.NewBuffer(jsonBody))
 	if err != nil {
 		log.Println("Backend error:", err)
@@ -97,7 +97,7 @@ func handleMention(api *slack.Client, event *slackevents.AppMentionEvent, backen
 	}
 	json.NewDecoder(resp.Body).Decode(&res)
 
-	// Reply in Slack
+	// Reply in the Slack
 	api.PostMessage(event.Channel, slack.MsgOptionText(res.FullResponse, false))
 
 	// Trace the response
